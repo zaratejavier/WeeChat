@@ -1,19 +1,28 @@
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button, Input, Image } from 'react-native-elements';
 import { KeyboardAvoidingView } from 'react-native';
+import { auth } from '../firebase';
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const signIn = () => {
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+      console.log("*************",authUser)
+      if (authUser) {
+        navigation.replace("Home")
+      }
+    })
+    return unsubscribe
+  }, [])
 
-  }
+  const signIn = () => {};
 
   return (
-    <KeyboardAvoidingView behavior='padding' style={styles.container}>
+    <KeyboardAvoidingView behavior="padding" style={styles.container}>
       <StatusBar style="light" />
       <Image
         source={{
@@ -38,8 +47,13 @@ const LoginScreen = () => {
         />
       </View>
       <Button containerStyle={styles.button} onPress={signIn} title="Login" />
-      <Button containerStyle={styles.button} type="outline" title="Register" />
-      <View style={{ height: 100}}/>
+      <Button
+        onPress={() => navigation.navigate('Register')}
+        containerStyle={styles.button}
+        type="outline"
+        title="Register"
+      />
+      <View style={{ height: 100 }} />
     </KeyboardAvoidingView>
   );
 };
@@ -50,17 +64,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: "center",
+    justifyContent: 'center',
     padding: 10,
     backgroundColor: 'white'
   },
   inputContainer: {
-    width: 300,
+    width: 300
   },
   button: {
     width: 200,
     marginTop: 10,
-    color:"#F44336"
+    color: '#F44336'
   }
-
 });
